@@ -1,12 +1,13 @@
 function MAP_EM_alg(data, cc)
 
+figure(1),
+
 [N,D]=size(data);
 
 % stardarize dataset by making each column be zero mean, standard derivation 1.
 y = data - repmat(mean(data), [N 1]);
 y = y ./ repmat(std(data), [N 1]);
 
-figure,
 set(gcf,'units','points','position',[200,200,1000,300])
 
 subplot(131)
@@ -23,13 +24,13 @@ K=10; % input your guess
 
 for i=1:K
     mu(i,:)=mean(y(find(IDX(:)==i),:));
-    sigma(:,:,i)=(cov(y(find(IDX(:)==i),:)));
+    sigma2(:,:,i)=(cov(y(find(IDX(:)==i),:)));
 	PI(i)=length(y(find(IDX(:)==i),:));
 end
 PI=PI/sum(PI);
 
 init_mu=mu;
-init_sigma=sigma;
+init_sigma2=sigma2;
 init_PI=PI;
 
 % keep the kmeans initials figure
@@ -40,7 +41,7 @@ plot(y(:,1),y(:,2),'b*')
 for i=1:K
     hold on
     plot(mu(i,1),mu(i,2),'g*')
-    eclipse_parameter(mu(i,:),sigma(:,:,i));
+    eclipse_plot(mu(i,:),sigma2(:,:,i));
     text(mu(i,1), mu(i,2), num2str(i),'BackgroundColor', [.8 .8 .8]);
 end
 title('KMeans initials')
@@ -52,7 +53,7 @@ drawnow;
 for i=1:N
     for j=1:K
         %probabilty of Gaussian
-        p_y(i,j)=(1/((2*pi)*sqrt(det(sigma(:,:,j)))))*exp(-0.5*(y(i,:)-mu(j,:))*inv(sigma(:,:,j))*(y(i,:)-mu(j,:))');
+        p_y(i,j)=(1/((2*pi)*sqrt(det(sigma2(:,:,j)))))*exp(-0.5*(y(i,:)-mu(j,:))*inv(sigma2(:,:,j))*(y(i,:)-mu(j,:))');
     end
     
 end
@@ -100,7 +101,7 @@ while iter<500 & diff_Q>1e-3
     end
     
     
-    % estimate sigma
+    % estimate sigma2
     
     for j=1:K
         temp=[0 0;0 0];
@@ -109,7 +110,7 @@ while iter<500 & diff_Q>1e-3
         end
         Sk(:,:,j)=temp; %(11.47)  from Kevin Murphy
         Stemp(:,:,j)=(sum(r(:,j))*beta_0(j)/(sum(r(:,j))+beta_0(j)))*((y_bar(j,:)-m0(j,:))'*(y_bar(j,:)-m0(j,:)));
-        sigma_hat(:,:,j)=(S0(:,:,j)+Sk(:,:,j)+Stemp(:,:,j))/(v0+sum(r(:,j))+D+2); %(11.46) from Kevin Murphy
+        sigma2_hat(:,:,j)=(S0(:,:,j)+Sk(:,:,j)+Stemp(:,:,j))/(v0+sum(r(:,j))+D+2); %(11.46) from Kevin Murphy
     end
     
     % estimate pi
@@ -118,20 +119,21 @@ while iter<500 & diff_Q>1e-3
     %deal with extinguished clusters
     for j=1:K
         if sum(r(:,j))<0.01
-            sigma_hat(:,:,j)=S0(:,:,j);
+            sigma2_hat(:,:,j)=S0(:,:,j);
         end
     end
     
-    % update mu, sigma, pi
+    % update mu, sigma2, pi
     mu=mu_hat;
     PI=pi_hat;
-    sigma=sigma_hat;
+    sigma2=sigma2_hat;
     
     keep_iter{iter}.mu=mu;
     keep_iter{iter}.PI=PI;
-    keep_iter{iter}.sigma=sigma;
+    keep_iter{iter}.sigma2=sigma2;
   
     %plot the new clusters after every iteration
+    figure(1),
     subplot(133)
     hold off
     plot(y(:,1),y(:,2),'b*')
@@ -139,19 +141,19 @@ while iter<500 & diff_Q>1e-3
         hold on
         if PI(i)>0.01
             plot(mu(i,1),mu(i,2),'g*')
-            eclipse_parameter(mu(i,:),sigma(:,:,i));
+            eclipse_plot(mu(i,:),sigma2(:,:,i));
             text(mu(i,1), mu(i,2), num2str(i),'BackgroundColor', [.8 .8 .8]);
         end
     end
 
     title(strcat('MAP EM iteration#', num2str(iter)),'fontsize',15)
     drawnow;
-    pause(0.1)
+%     pause(0.1)
     
     for i=1:N
         for j=1:K
             %probabilty of Gaussian
-            p_y(i,j)=(1/((2*pi)*sqrt(det(sigma(:,:,j)))))*exp(-0.5*(y(i,:)-mu(j,:))*inv(sigma(:,:,j))*(y(i,:)-mu(j,:))');
+            p_y(i,j)=(1/((2*pi)*sqrt(det(sigma2(:,:,j)))))*exp(-0.5*(y(i,:)-mu(j,:))*inv(sigma2(:,:,j))*(y(i,:)-mu(j,:))');
         end
     end
     

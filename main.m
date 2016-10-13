@@ -9,3 +9,4 @@ MAP_EM_alg(dataset, cc)
 
 
 %% Chinese Restaurant Process Algorithm
+CRP_alg(dataset, cc)
