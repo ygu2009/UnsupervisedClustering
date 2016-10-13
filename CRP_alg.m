@@ -81,7 +81,7 @@ while iter<100 % number of iterations
         end
         
         %scanned data point
-        data=y(nn,:);
+        y2=y(nn,:);
         clear p;
         
         sigma=[1 0;0 1]; % for simple experiment, sigma is set to 1 constant
@@ -112,7 +112,7 @@ while iter<100 % number of iterations
                 mucc2(1,2)=(n/(1+n))*mucc(1,2)+(1/(n+1))*G0means(1,2);
                 % Case 1: 1<c<k-
                 % p(c_i|c_(-i),theta)=[n_(-i,c)/(n-1+alpha)]*F(y_i|theta_c)
-                p1=mvnpdf(data,mucc2,sigma);
+                p1=mvnpdf(y2,mucc2,sigma);
                 p2=(length(sub_y))/(numdata-1+alpha);
                 p(ci)=p1*p2;
             end
@@ -121,7 +121,7 @@ while iter<100 % number of iterations
         for ci=(numclass+spirit+1):(numclass+spirit+m)
             % Case 2: k-<c<h
             % p(c_i|c_(-i),theta)=[alpha/(n-1+alpha)]*F(y_i|theta_c)
-            p1=mvnpdf(data,ghost(ci-numclass-spirit,:),ghostsigma(:,:,ci-numclass-spirit));
+            p1=mvnpdf(y2,ghost(ci-numclass-spirit,:),ghostsigma(:,:,ci-numclass-spirit));
             p2=(alpha/m)/(numdata-1+alpha);
             p(ci)=p1*p2;
         end
