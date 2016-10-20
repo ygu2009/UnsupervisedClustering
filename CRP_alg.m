@@ -1,4 +1,8 @@
 function CRP_alg(data, cc)
+% Author: Yingying Gu (ying.y.gu@gmail.com)
+% version 1.0
+% Copyright 2012
+% University of Wisconsin-Milwaukee
 
 figure(2),
 

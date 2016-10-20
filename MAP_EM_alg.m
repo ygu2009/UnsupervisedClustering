@@ -1,5 +1,10 @@
 function MAP_EM_alg(data, cc)
 
+% Author: Yingying Gu (ying.y.gu@gmail.com)
+% version 1.0
+% Copyright 2014
+% University of Wisconsin-Milwaukee
+
 figure(1),
 
 [N,D]=size(data);
