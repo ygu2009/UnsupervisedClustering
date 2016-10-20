@@ -8,4 +8,4 @@ Unsupervised Clustering with Unknown Number of Clusters:
 
 2. Non-parameteric Method: Chinese Resturant Processing (CRP)
 [1]R.M. Neal, Markov chain sampling methods for Dirichlet process mixture models. Journal of Computational and Graphical Statistics, 9(2), pp. 249-265, 2000.
-
+![CRP_Demo](./CRP_alg_demo.gif)
