@@ -4,7 +4,13 @@ function CRP_alg(data, cc)
 % Copyright 2012
 % University of Wisconsin-Milwaukee
 
-figure(2),
+fig=figure(2),
+set(fig,'position',[100,100,1000,300])
+
+winsize = get(fig,'Position');
+winsize(1:2) = [0,0];
+mm=1;
+mov(mm) = getframe(fig, winsize)
 
 [N,D]=size(data);
 
@@ -13,9 +19,6 @@ y = data - repmat(mean(data), [N 1]);
 y = y ./ repmat(std(data), [N 1]);
 
 numdata=size(y,1);
-
-
-set(gcf,'units','points','position',[100,100,1000,300])
 
 subplot(121)
 gscatter(y(:,1), y(:,2), cc)
@@ -67,6 +70,7 @@ end
 box on
 title('Initial' ,'FontSize',15);
 drawnow;
+mov(1) = getframe(fig, winsize);
 
 alpha=10;
 iter=0;
@@ -201,5 +205,10 @@ while iter<100 % number of iterations
     end
     drawnow;
     
+    mm=mm+1;
+    mov(mm) = getframe(fig, winsize);
+    
 end
+
+movie2gif(mov(1:mm), 'CRP_alg_demo.gif')
 
