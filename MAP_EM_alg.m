@@ -5,15 +5,19 @@ function MAP_EM_alg(data, cc)
 % Copyright 2014
 % University of Wisconsin-Milwaukee
 
-figure(1),
+fig=figure(1),
+set(fig,'position',[200,200,1000,300])
+
+winsize = get(fig,'Position');
+winsize(1:2) = [0,0];
+mm=1;
+mov(mm) = getframe(fig, winsize)
 
 [N,D]=size(data);
 
 % stardarize dataset by making each column be zero mean, standard derivation 1.
 y = data - repmat(mean(data), [N 1]);
 y = y ./ repmat(std(data), [N 1]);
-
-set(gcf,'units','points','position',[200,200,1000,300])
 
 subplot(131)
 gscatter(y(:,1), y(:,2), cc)
@@ -51,6 +55,7 @@ for i=1:K
 end
 title('KMeans initials')
 drawnow;
+mov(mm)= getframe(fig, winsize);
 
 
 % initial likelihood
@@ -138,7 +143,7 @@ while iter<500 & diff_Q>1e-3
     keep_iter{iter}.sigma2=sigma2;
   
     %plot the new clusters after every iteration
-    figure(1),
+%     figure(1),
     subplot(133)
     hold off
     plot(y(:,1),y(:,2),'b*')
@@ -153,6 +158,8 @@ while iter<500 & diff_Q>1e-3
 
     title(strcat('MAP EM iteration#', num2str(iter)),'fontsize',15)
     drawnow;
+    mm=mm+1;
+    mov(mm) = getframe(fig, winsize);
 %     pause(0.1)
     
     for i=1:N
@@ -169,4 +176,6 @@ while iter<500 & diff_Q>1e-3
     Q0=Q;
 
 end
+
+movie2gif(mov(1:mm), 'MAPEM_alg_demo.gif')
 

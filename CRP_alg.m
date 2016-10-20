@@ -70,7 +70,7 @@ end
 box on
 title('Initial' ,'FontSize',15);
 drawnow;
-mov(1) = getframe(fig, winsize);
+mov(mm) = getframe(fig, winsize);
 
 alpha=10;
 iter=0;
